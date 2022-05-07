@@ -21,6 +21,7 @@ async function run() {
 
         await client.connect()
         const productCollection = client.db('groci').collection('product')
+        const itemCollection = client.db('item').collection('newItem')
         app.get('/product', async (req, res) => {
             const query = {}
             const cursor = productCollection.find(query)
@@ -41,20 +42,37 @@ async function run() {
             const result = await productCollection.deleteOne(query)
             res.send(result)
         })
-        app.patch('/product/:id', async (req, res) => {
+        app.put('/product/:id', async (req, res) => {
             const id = req.params.id
             const updatedProduct = req.body;
             const filter = { _id: ObjectId(id) }
             const options = { upsert: true };
             const updateDoc = {
-                $set: {
-                    quantity: updatedProduct.quantity
-                }
+                $set: updatedProduct
             };
-            const result = await productCollection.updateOne(filter, options, updateDoc)
+            const result = await productCollection.updateOne(filter, updateDoc, options)
             console.log(result);
+
+            res.send({ result })
+        })
+
+        app.post('/manageproduct', async (req, res) => {
+            const newProduct = req.body;
+            // const result = await productCollection.insertOne(newProduct)
+            const result = await itemCollection.insertOne(newProduct)
+            // console.log(newProduct);
             res.send(result)
         })
+
+        app.get('/myitem', async (req, res) => {
+            const email = req.query.email;
+            // console.log(email);
+            const query = { email: email }
+            const cursor = itemCollection.find(query)
+            const myItem = await cursor.toArray()
+            res.send(myItem)
+        })
+
     }
 
     finally {
