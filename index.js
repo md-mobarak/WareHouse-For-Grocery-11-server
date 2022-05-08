@@ -50,7 +50,7 @@ async function run() {
             const id = req.params.id
             const query = { _id: ObjectId(id) }
             const product = await productCollection.findOne(query)
-            // console.log(product);
+
             res.send(product)
         })
 
@@ -58,7 +58,7 @@ async function run() {
         app.post('/manageproduct', async (req, res) => {
             const newProduct = req.body;
             const result = await itemCollection.insertOne(newProduct)
-            console.log(result);
+
             res.send(result)
         })
 
@@ -73,7 +73,7 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
             const result = await itemCollection.deleteOne(query)
-            // console.log(result);
+
             res.send(result)
         })
 
@@ -104,9 +104,9 @@ async function run() {
                     quantity: updatedValue.quantity
                 }
             }
-            console.log(updatedDoc);
+            // console.log(updatedDoc);
             const result = await productCollection.updateOne(filter, updatedDoc, options)
-            console.log(result);
+            // console.log(result);
             res.send(result)
         })
 
