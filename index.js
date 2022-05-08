@@ -65,22 +65,41 @@ async function run() {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
             const result = await itemCollection.deleteOne(query)
-            console.log(result);
+            // console.log(result);
             res.send(result)
         })
 
+        // new try 
+        app.put('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateInfo = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upset: true }
+            const updateDoc = {
+                $set: {
+                    quantity: updateInfo.quantity
+                }
+            }
+            const result = await productCollection.updateOne(filter, updateDoc, options);
+            res.send(result)
+        })
+
+
         app.put('/product/:id', async (req, res) => {
             const id = req.params.id
-            const updatedProduct = req.body;
+            const updatedValue = req.body
+            // console.log(updatedValue);
             const filter = { _id: ObjectId(id) }
             const options = { upsert: true };
-            const updateDoc = {
-                $set: updatedProduct
-            };
-            const result = await productCollection.updateOne(filter, updateDoc, options)
+            const updatedDoc = {
+                $set: {
+                    quantity: updatedValue.quantity
+                }
+            }
+            console.log(updatedDoc);
+            const result = await productCollection.updateOne(filter, updatedDoc, options)
             console.log(result);
-
-            res.send({ result })
+            res.send(result)
         })
 
         app.post('/manageproduct', async (req, res) => {
@@ -101,7 +120,7 @@ async function run() {
         app.get('/myitem', varifyJwt, async (req, res) => {
 
             const email = req.query.email;
-            // console.log(email);
+
             const query = { email: email }
             const cursor = itemCollection.find(query)
             const myItem = await cursor.toArray()
